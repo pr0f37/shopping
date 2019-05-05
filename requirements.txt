@@ -1,0 +1,10 @@
+certifi==2019.3.9
+chardet==3.0.4
+future==0.17.1
+gkeepapi==0.11.5
+gpsoauth==0.4.1
+idna==2.8
+pycryptodomex==3.8.1
+requests==2.21.0
+six==1.12.0
+urllib3==1.24.3
