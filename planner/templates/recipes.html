@@ -1,18 +1,19 @@
 {% extends "layout.html" %}
 {% block content %}
     {% for recipe in recipe_list %}
-        <h1>{{ recipe.name }}</h1>
-        <h5>Składniki:</h5>
-        <ul>
-            {% for ingr in recipe.ingredients %}
-                <li>{{ ingr.name }}{% if ingr.amount %}: {{ ingr.amount }} {{ ingr.unit }}{% endif %}</li>
-            {% endfor %}
-        </ul>
-        <h5>Czas:</h5>
-        <p>{{ recipe.time }}</p>
-        <h5>Przepis:</h5>
-        <p>
-            {{ recipe.recipe }}
-        </p>
+        <article class="content-section">
+            <p class="lead">{{ recipe.name }}</p>
+            <p>Składniki:
+                <ul class="list">
+                    {% for ingr in recipe.ingredients %}
+                        <li>{{ ingr.name }}{% if ingr.amount %}: {{ ingr.amount }} {{ ingr.unit }}{% endif %}</li>
+                    {% endfor %}
+                </ul>
+            </p>
+            <p>Czas: {{ recipe.time }}</p>
+            <p>Przepis:
+                {{ recipe.recipe }}
+            </p>
+        </article>
     {% endfor %}
 {% endblock content %}
