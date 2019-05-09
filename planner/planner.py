@@ -1,8 +1,50 @@
+from datetime import datetime
 from flask import Flask, render_template, url_for, flash, redirect
+from flask_sqlalchemy import SQLAlchemy
 from forms import RegistrationForm, LoginForm
 app = Flask(__name__)
 
 app.config['SECRET_KEY'] = 'd3aea4edbd9911a7d1649cb386549c92'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///site.db'
+
+db = SQLAlchemy(app)
+
+
+# class IngredientToRecipe(db.Model):
+#     __tablename__ = 'ing2rec'
+#     id = db.Column(db.Integer, primary_key=True)
+#     recipe_id = db.Column(db.Integer, db.ForeignKey('recipe.id'), nullable=False)
+#     ingredient_id = db.Column(db.Integer, db.ForeignKey('ingredient.id'), nullable=False)
+#     amount = db.Column(db.String(10))
+#     # recipe = db.relationship('Recipe', backref='ingredients', lazy=True)
+#     # ingredient = db.relationship('Ingredient', backref='recipes', lazy=True)
+
+
+class Ingredient(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100), nullable=False)
+    recipe_id = db.Column(db.Integer, db.ForeignKey('recipe.id'), nullable=False)
+
+
+class Recipe(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(100), nullable=False)
+    date_posted = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    time = db.Column(db.String(10))
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    ingredients = db.relationship('Ingredient', backref='recipes', lazy=True)
+
+
+class User(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(20), unique=True, nullable=False)
+    email = db.Column(db.String(120), unique=True, nullable=False)
+    image_file = db.Column(db.String(20), nullable=False, default='default.jpg')
+    password = db.Column(db.String(60), nullable=False)
+    recipes = db.relationship('Recipe', backref='author', lazy=True)
+
+    def __repr__(self):
+        return f"User('{self.username}', '{self.email}', '{self.image_file}')"
 
 recipe_list = [
     {
