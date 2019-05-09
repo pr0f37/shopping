@@ -10,19 +10,10 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///site.db'
 db = SQLAlchemy(app)
 
 
-# class IngredientToRecipe(db.Model):
-#     __tablename__ = 'ing2rec'
-#     id = db.Column(db.Integer, primary_key=True)
-#     recipe_id = db.Column(db.Integer, db.ForeignKey('recipe.id'), nullable=False)
-#     ingredient_id = db.Column(db.Integer, db.ForeignKey('ingredient.id'), nullable=False)
-#     amount = db.Column(db.String(10))
-#     # recipe = db.relationship('Recipe', backref='ingredients', lazy=True)
-#     # ingredient = db.relationship('Ingredient', backref='recipes', lazy=True)
-
-
 class Ingredient(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
+    amount = db.Column(db.String(10))
     recipe_id = db.Column(db.Integer, db.ForeignKey('recipe.id'), nullable=False)
 
 
