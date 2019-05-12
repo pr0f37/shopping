@@ -2,7 +2,7 @@
 {% block content %}
     {% for recipe in recipe_list %}
         <article class="content-section">
-            <p class="lead">{{ recipe.name }}</p>
+            <p class="lead">{{ recipe.title }}</p>
             <p>Składniki:
                 <ul class="list">
                     {% for ingr in recipe.ingredients %}
@@ -12,7 +12,7 @@
             </p>
             <p>Czas: {{ recipe.time }}</p>
             <p>Przepis:
-                {{ recipe.recipe }}
+                {{ recipe.text }}
             </p>
         </article>
     {% endfor %}
