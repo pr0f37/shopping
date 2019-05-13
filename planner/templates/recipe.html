@@ -1,0 +1,22 @@
+{% extends "layout.html" %}
+{% block content %}
+    <article class="content-section">
+        <div class="article-metadata">
+            <img class="rounded-circle article-img" src="{{ url_for('static', filename='profile_pics/'+ recipe.author.image_file) }}">
+            <a class="mr-2" href="#">{{ recipe.author.username }}</a>
+            <small class="text-muted">{{ recipe.date_posted.strftime('%Y-%m-%d %H:%M') }}</small>
+        </div>
+        <p class="lead">{{ recipe.title }}</p>
+        <p>Składniki:
+            <ul class="list">
+                {% for ingr in recipe.ingredients %}
+                    <li>{{ ingr.name }}{% if ingr.amount %}: {{ ingr.amount }} {{ ingr.unit }}{% endif %}</li>
+                {% endfor %}
+            </ul>
+        </p>
+        <p>Czas: {{ recipe.time }}</p>
+        <p>Przepis:
+            {{ recipe.text }}
+        </p>
+    </article>
+{% endblock content %}

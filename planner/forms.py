@@ -1,9 +1,9 @@
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileAllowed
 from flask_login import current_user
-from wtforms import StringField, PasswordField, SubmitField, BooleanField
+from wtforms import StringField, PasswordField, SubmitField, BooleanField, TextAreaField
 from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError
-from planner.models import User
+from planner.models import User, Recipe
 
 
 class RegistrationForm(FlaskForm):
@@ -55,3 +55,17 @@ class UpdateAccountForm(FlaskForm):
             user = User.query.filter_by(email=email.data).first()
             if user:
                 raise ValidationError('Email taken. Choose a different username')
+
+
+class RecipeForm(FlaskForm):
+    title = StringField('Title', validators=[DataRequired()])
+    time = StringField('Time', validators=[DataRequired()])
+    text = TextAreaField('Text', validators=[DataRequired()])
+    ingredient_name = StringField('Ingredient[]', validators=[DataRequired()])
+    ingredient_amount = StringField('Amount[]')
+    submit = SubmitField('Recipe')
+
+    def validate_title(self, title):
+        recipe = Recipe.query.filter_by(title=title.data).first()
+        if recipe:
+            raise ValidationError('The recipe with the same title exists. Choose a different recipe title')

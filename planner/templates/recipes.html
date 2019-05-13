@@ -2,7 +2,12 @@
 {% block content %}
     {% for recipe in recipe_list %}
         <article class="content-section">
-            <p class="lead">{{ recipe.title }}</p>
+            <div class="article-metadata">
+                <img class="rounded-circle article-img" src="{{ url_for('static', filename='profile_pics/'+ recipe.author.image_file) }}">
+                <a class="mr-2" href="#">{{ recipe.author.username }}</a>
+                <small class="text-muted">{{ recipe.date_posted.strftime('%Y-%m-%d %H:%M') }}</small>
+            </div>
+            <p class="lead"><a class="article-title" href="{{ url_for('recipe', recipe_id=recipe.id) }}"">{{ recipe.title }}</a></p>
             <p>Składniki:
                 <ul class="list">
                     {% for ingr in recipe.ingredients %}

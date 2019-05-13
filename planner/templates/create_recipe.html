@@ -1,0 +1,138 @@
+{% extends "layout.html" %}
+{% block content %}
+    <div class="form-group dynamic-element" style="display:none">
+        <div class="row">
+            <div class="col-md"></div>
+            <!-- Replace these fields -->
+            <div class="form-group form-inline">
+                <label class="form-control-label" for="ingredient_name">Ingredient</label>
+                <div class="col-md"></div>
+                {% if form.ingredient_name.errors %}
+                    {{ form.ingredient_name(class="form-control is-invalid") }}
+                    <div class="invalid-feedback">
+                        {% for error in form.ingredient_name.errors %}
+                            <span>{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    {{ form.ingredient_name(class="form-control") }}
+                {% endif %}
+                <div class="col-md"></div>
+                <label class="form-control-label" for="ingredient_amount">Amount</label>
+                <div class="col-md"></div>
+                {% if form.ingredient_amount.errors %}
+                    {{ form.ingredient_amount(class="form-control is-invalid") }}
+                    <div class="invalid-feedback">
+                        {% for error in form.ingredient_amount.errors %}
+                            <span>{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    {{ form.ingredient_amount(class="form-control") }}
+                {% endif %}
+            </div>
+            <!-- End of fields-->
+            <div class="col-md-auto">
+                <p class="delete" onclick="console.log('click'); $(this).closest('.form-group').remove();">x</p>
+            </div>
+            <div class="col-md"></div>
+        </div>
+    </div>
+
+    <div class="content-section">
+        <form action="" method="post">
+            {{ form.hidden_tag() }}
+            <fieldset class="form-group">
+                <legend class="border-bottom mb-4">{{ title }}</legend>
+                <div class="form-group">
+                    {{ form.title.label(class="form-control-label") }}
+                    {% if form.title.errors %}
+                        {{ form.title(class="form-control form-control-lg is-invalid") }}
+                        <div class="invalid-feedback">
+                            {% for error in form.title.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ form.title(class="form-control form-control-lg") }}
+                    {% endif %}
+                </div>
+                <div class="form-group">
+                        {{ form.time.label(class="form-control-label") }}
+                        {% if form.time.errors %}
+                            {{ form.time(class="form-control form-control-lg is-invalid") }}
+                            <div class="invalid-feedback">
+                                {% for error in form.time.errors %}
+                                    <span>{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            {{ form.time(class="form-control form-control-lg") }}
+                        {% endif %}
+                    </div>
+                <div class="form-group">
+                    {{ form.text.label(class="form-control-label") }}
+                    {% if form.text.errors %}
+                        {{ form.text(class="form-control form-control-lg is-invalid") }}
+                        <div class="invalid-feedback">
+                            {% for error in form.text.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ form.text(class="form-control form-control-lg") }}
+                    {% endif %}
+                </div>
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col"></div>
+                        <div class="col">
+                                <p class="add-one" onclick="$('.dynamic-element').first().clone().appendTo('.dynamic-stuff').show();">Add Ingredient</p>
+                        </div>
+                        <div class="col"></div>
+                </div>
+                <div class="dynamic-stuff">
+                    <div class="row">
+                        <div class="col-md"></div>
+                        <div class="form-group form-inline">
+                            <label class="form-control-label" for="ingredient_name">Ingredient</label>
+                            <div class="col-md"></div>
+                            {% if form.ingredient_name.errors %}
+                                {{ form.ingredient_name(class="form-control is-invalid") }}
+                                <div class="invalid-feedback">
+                                    {% for error in form.ingredient_name.errors %}
+                                        <span>{{ error }}</span>
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                {{ form.ingredient_name(class="form-control") }}
+                            {% endif %}
+                            <div class="col-md"></div>
+                            <label class="form-control-label" for="ingredient_amount">Amount</label>
+                            <div class="col-md"></div>
+                            {% if form.ingredient_amount.errors %}
+                                {{ form.ingredient_amount(class="form-control is-invalid") }}
+                                <div class="invalid-feedback">
+                                    {% for error in form.ingredient_amount.errors %}
+                                        <span>{{ error }}</span>
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                {{ form.ingredient_amount(class="form-control") }}
+                            {% endif %}
+                        </div>
+                        <div class="col-md-auto">
+                            <p class="delete inactive"></p>
+                        </div>
+                        <div class="col-md"></div>
+                    </div>
+                <!-- Dynamic element will be cloned here -->
+                <!-- You can call clone function once if you want it to show it a first element-->
+                </div>
+            </fieldset>
+            <div class="form-group">
+                {{ form.submit(class="btn btn-outline-info") }}
+            </div>
+        </form>
+    </div>
+{% endblock content %}

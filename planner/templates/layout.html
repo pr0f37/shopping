@@ -7,7 +7,6 @@
 
         <!-- Bootstrap CSS -->
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-
         <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='main.css') }}">
         <title>Planer diety i zakupów{% if title %} - {{ title }}{% endif %}</title>
     </head>
@@ -20,22 +19,18 @@
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="collapse navbar-collapse" id="navbarToggle">
-                    <div class="navbar-nav mr-auto">
+                    <div class="navbar-nav">
                     {% if current_user.is_authenticated %}
                         <a class="nav-item nav-link" href="{{ url_for('recipes') }}">Recipes</a>
                         <a class="nav-item nav-link" href="#">Calendar</a>
-                    {% endif %}
-                        <a class="nav-item nav-link" href="{{ url_for('about') }}">About</a>
-                    </div>
-                    <!-- Navbar Right Side -->
-                    <div class="navbar-nav">
-                    {% if current_user.is_authenticated %}
+                        <a class="nav-item nav-link" href="{{ url_for('new_recipe') }}">New Recipe</a>
                         <a class="nav-item nav-link" href="{{ url_for('account') }}">Account</a>
                         <a class="nav-item nav-link" href="{{ url_for('logout') }}">Log out</a>
                     {% else %}
                         <a class="nav-item nav-link" href="{{ url_for('login') }}">Log in</a>
                         <a class="nav-item nav-link" href="{{ url_for('register') }}">Register</a>
                     {% endif %}
+                        <a class="nav-item nav-link" href="{{ url_for('about') }}">About</a>
                     </div>
                 </div>
             </div>
@@ -43,6 +38,7 @@
         </header>
         <main role="main" class="container">
             <div class="row">
+                    <div class="col"></div>
                 <div class="col-md-10">
                     {% with messages = get_flashed_messages(with_categories=true) %}
                         {% if messages %}
@@ -55,14 +51,9 @@
                     {% endwith %}
                     {% block content %}{% endblock %}
                 </div>
-                <!-- <div class="col-md-2 list-group">
-                    <a href="{{ url_for('recipes') }}" class="list-group-item list-group-item-action">Recipes</a>
-                    <a href="#" class="list-group-item list-group-item-action disabled">Calendar</a>
-                </div> -->
+                <div class="col"></div>
             </div>
         </main>
-    
-    
         <!-- Optional JavaScript -->
         <!-- jQuery first, then Popper.js, then Bootstrap JS -->
         <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>

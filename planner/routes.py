@@ -1,76 +1,11 @@
 import secrets
 import os
 from PIL import Image
-from flask import render_template, url_for, flash, redirect, request
+from flask import render_template, url_for, flash, redirect, request, abort
 from planner import app, db, bcrypt
-from planner.forms import RegistrationForm, LoginForm, UpdateAccountForm
+from planner.forms import RegistrationForm, LoginForm, UpdateAccountForm, RecipeForm
 from planner.models import User, Recipe, Ingredient
 from flask_login import login_user, current_user, logout_user, login_required
-
-
-recipe_list = [
-    {
-        'name': 'Jajecznica',
-        'ingredients': [
-            {
-                'name': 'Jajka',
-                'amount': '2',
-                'unit': ''
-            },
-            {
-                'name': 'Masło',
-                'amount': '10',
-                'unit': 'g'
-            }
-        ],
-        'recipe': '''Rozgrzać patelnię.
-                    Wrzucić masło na patelnię i poczekać aż się rozpuści.
-                    Rozbić jajka i roztrzepać na patelni.
-                    Smażyć na wolnym ogniu aż jajka się zetną.
-                ''',
-        'time': '10 min'
-    },
-    {
-        'name': 'Shakshuka',
-        'ingredients': [
-            {
-                'name': 'Jajka',
-                'amount': '3',
-                'unit': ''
-            },
-            {
-                'name': 'Olej rzepakowy',
-                'amount': '10',
-                'unit': 'ml'
-            },
-            {
-                'name': 'Cebula',
-                'amount': '1',
-                'unit': ''
-            },
-            {
-                'name': 'Passata',
-                'amount': '600',
-                'unit': 'ml'
-            },
-            {
-                'name': 'Kmin rzymski',
-                'amount': '',
-                'unit': ''
-            },
-        ],
-        'recipe': '''Rozgrzać patelnię.
-                    Na oleju zeszklić cebulę.
-                    Dodać passatę, doprawić pieprzem, solą,
-                    kminem i odrobiną cukru.
-                    Smażyć na wolnym ogniu aż do zgęstnienia passaty.
-                    Utworzyć na powieżchni passaty 3 wgłębienia.
-                    Wbić po jednym jajku do każdego wgłębienia.
-                    Dusić pod przykryciem na wolnym ogniu aż jajka będą ścięte.
-                ''',
-        'time': '30 min'
-    }
-]
 
 
 @app.route("/")
@@ -83,9 +18,7 @@ def home():
 @login_required
 def recipes():
     recipe_list = Recipe.query.all()
-    return render_template('recipes.html',
-                           recipe_list=recipe_list,
-                           title='Przepisy')
+    return render_template('recipes.html', recipe_list=recipe_list, title='Przepisy')
 
 
 @app.route("/about")
@@ -167,4 +100,39 @@ def account():
         form.username.data = current_user.username
         form.email.data = current_user.email
     image_file = url_for('static', filename=f'profile_pics/{current_user.image_file}')
-    return render_template('account.html', title='About', image_file=image_file, form=form)
+    return render_template('account.html', title='Account', image_file=image_file, form=form)
+
+
+@app.route("/recipe/new", methods=['GET', 'POST'])
+@login_required
+def new_recipe():
+    form = RecipeForm()
+    if form.validate_on_submit():
+        ingredients = [Ingredient(name=x, amount=y) for x, y in (zip(request.form.getlist('ingredient_name'), request.form.getlist('ingredient_amount')))]
+        recipe = Recipe(title=form.title.data, time=form.time.data, text=form.text.data, author=current_user, ingredients=ingredients)
+        db.session.add(recipe)
+        db.session.commit()
+        flash('Your recipe has been created', 'success')
+        return redirect(url_for('recipes '))
+    return render_template('create_recipe.html', title='New Recipe', form=form)
+
+
+@app.route("/recipe/<recipe_id>")
+@login_required
+def recipe(recipe_id):
+    recipe = Recipe.query.get_or_404(recipe_id)
+    return render_template('recipe.html', title=recipe.title, recipe=recipe)
+
+
+@app.route("/recipe/<recipe_id>/update", methods=['GET', 'POST'])
+@login_required
+def update_recipe(recipe_id):
+    recipe = Recipe.query.get_or_404(recipe_id)
+    if current_user != recipe.author:
+        abort(403)
+    form = RecipeForm()
+    form.title.data = recipe.title
+    form.time.data = recipe.time
+    form.text.data = recipe.text
+    # TODO handle ingredients list in the html page
+    return render_template('create_recipe.html', title='Update Recipe', form=form, ingredients=recipe.ingredients)
