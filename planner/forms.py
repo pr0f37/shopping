@@ -61,11 +61,11 @@ class RecipeForm(FlaskForm):
     title = StringField('Title', validators=[DataRequired()])
     time = StringField('Time', validators=[DataRequired()])
     text = TextAreaField('Text', validators=[DataRequired()])
-    ingredient_name = StringField('Ingredient[]', validators=[DataRequired()])
+    ingredient_name = StringField('Ingredient[]')
     ingredient_amount = StringField('Amount[]')
     submit = SubmitField('Recipe')
 
-    def validate_title(self, title):
-        recipe = Recipe.query.filter_by(title=title.data).first()
-        if recipe:
-            raise ValidationError('The recipe with the same title exists. Choose a different recipe title')
+    # def validate_title(self, title):
+    #     recipe = Recipe.query.filter_by(title=title.data).first()
+    #     if recipe:
+    #         raise ValidationError('The recipe with the same title exists. Choose a different recipe title')

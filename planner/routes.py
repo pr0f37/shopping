@@ -113,8 +113,8 @@ def new_recipe():
         db.session.add(recipe)
         db.session.commit()
         flash('Your recipe has been created', 'success')
-        return redirect(url_for('recipes '))
-    return render_template('create_recipe.html', title='New Recipe', form=form)
+        return redirect(url_for('recipes'))
+    return render_template('create_recipe.html', title='New Recipe', form=form, ingredients=[Ingredient(name='', amount='')])
 
 
 @app.route("/recipe/<recipe_id>")
@@ -131,8 +131,19 @@ def update_recipe(recipe_id):
     if current_user != recipe.author:
         abort(403)
     form = RecipeForm()
-    form.title.data = recipe.title
-    form.time.data = recipe.time
-    form.text.data = recipe.text
-    # TODO handle ingredients list in the html page
+    if form.validate_on_submit():
+        ingredients = [Ingredient(name=x, amount=y, recipe_id=recipe.id) for x, y in (zip(request.form.getlist('ingredient_name'), request.form.getlist('ingredient_amount')))]
+        recipe.title = form.title.data
+        recipe.time = form.time.data
+        recipe.text = form.text.data
+        for ingredient in recipe.ingredients:
+            db.session.delete(ingredient)
+        recipe.ingredients = ingredients
+        db.session.commit()
+        flash('Your recipe has been updated', 'success')
+        return redirect(url_for('recipes'))
+    elif request.method == 'GET':
+        form.title.data = recipe.title
+        form.time.data = recipe.time
+        form.text.data = recipe.text
     return render_template('create_recipe.html', title='Update Recipe', form=form, ingredients=recipe.ingredients)
