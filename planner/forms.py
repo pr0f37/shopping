@@ -63,7 +63,7 @@ class RecipeForm(FlaskForm):
     text = TextAreaField('Text', validators=[DataRequired()])
     ingredient_name = StringField('Ingredient[]')
     ingredient_amount = StringField('Amount[]')
-    submit = SubmitField('Recipe')
+    submit = SubmitField('Post')
 
     # def validate_title(self, title):
     #     recipe = Recipe.query.filter_by(title=title.data).first()

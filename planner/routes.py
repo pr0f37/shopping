@@ -141,9 +141,23 @@ def update_recipe(recipe_id):
         recipe.ingredients = ingredients
         db.session.commit()
         flash('Your recipe has been updated', 'success')
-        return redirect(url_for('recipes'))
+        return redirect(url_for('recipe', recipe_id=recipe.id))
     elif request.method == 'GET':
         form.title.data = recipe.title
         form.time.data = recipe.time
         form.text.data = recipe.text
     return render_template('create_recipe.html', title='Update Recipe', form=form, ingredients=recipe.ingredients)
+
+
+@app.route("/recipe/<recipe_id>/delete", methods=['POST'])
+@login_required
+def delete_recipe(recipe_id):
+    recipe = Recipe.query.get_or_404(recipe_id)
+    if current_user != recipe.author:
+        abort(403)
+    for ingredient in recipe.ingredients:
+        db.session.delete(ingredient)
+    db.session.delete(recipe)
+    db.session.commit()
+    flash('Your recipe has been updated', 'success')
+    return redirect(url_for('home'))
