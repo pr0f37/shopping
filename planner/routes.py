@@ -11,14 +11,16 @@ from flask_login import login_user, current_user, logout_user, login_required
 @app.route("/")
 @app.route("/home")
 def home():
-    return render_template('home.html')
+    page = request.args.get('page', 1, type=int)
+    recipe_list = Recipe.query.order_by(Recipe.date_posted.desc()).paginate(page=page, per_page=5)
+    return render_template('home.html', recipe_list=recipe_list, title='Home')
 
 
 @app.route("/recipes")
 @login_required
 def recipes():
     recipe_list = Recipe.query.all()
-    return render_template('recipes.html', recipe_list=recipe_list, title='Przepisy')
+    return render_template('recipes.html', recipe_list=recipe_list, title='Recipes')
 
 
 @app.route("/about")
@@ -161,3 +163,13 @@ def delete_recipe(recipe_id):
     db.session.commit()
     flash('Your recipe has been updated', 'success')
     return redirect(url_for('home'))
+
+
+@app.route("/user/<string:username>")
+def user_recipes(username):
+    page = request.args.get('page', 1, type=int)
+    user = User.query.filter_by(username=username).first_or_404()
+    recipe_list = Recipe.query.filter_by(author=user)\
+        .order_by(Recipe.date_posted.desc())\
+        .paginate(page=page, per_page=5)
+    return render_template('user_recipes.html', recipe_list=recipe_list, user=user)
