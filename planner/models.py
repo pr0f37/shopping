@@ -18,6 +18,12 @@ class Ingredient(db.Model):
         return f"Ingredient('{self.name}', '{self.amount}')"
 
 
+class Likes(db.Model):
+    __tablename__ = 'likes'
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), primary_key=True)
+    recipe_id = db.Column(db.Integer, db.ForeignKey('recipe.id'), primary_key=True)
+
+
 class Recipe(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(100), nullable=False)
@@ -26,9 +32,10 @@ class Recipe(db.Model):
     text = db.Column(db.String(2000), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     ingredients = db.relationship('Ingredient', backref='recipes', lazy=True)
+    fans = db.relationship("User", secondary='likes', back_populates='favorite_recipes')
 
     def __repr__(self):
-        return f"Recipe('{self.title}', '{self.date_posted}', '{self.time}, '{self.ingredients}')"
+        return f"Recipe('title={self.title}', date_posted='{self.date_posted}', time='{self.time}, ingredients='{self.ingredients}, fans={self.fans}')"
 
 
 class User(db.Model, UserMixin):
@@ -38,6 +45,7 @@ class User(db.Model, UserMixin):
     image_file = db.Column(db.String(20), nullable=False, default='default.jpg')
     password = db.Column(db.String(60), nullable=False)
     recipes = db.relationship('Recipe', backref='author', lazy=True)
+    favorite_recipes = db.relationship("Recipe", secondary='likes', back_populates='fans')
 
     def __repr__(self):
         return f"User('{self.username}', '{self.email}', '{self.image_file}')"

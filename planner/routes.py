@@ -20,7 +20,8 @@ def home():
 @app.route("/recipes")
 @login_required
 def recipes():
-    recipe_list = Recipe.query.all()
+    page = request.args.get('page', 1, type=int)
+    recipe_list = Recipe.query.join(Recipe.fans).filter_by(email=current_user.email).paginate(page=page, per_page=5)
     return render_template('recipes.html', recipe_list=recipe_list, title='Recipes')
 
 
@@ -189,18 +190,3 @@ def export():
     flash_msg = export_to_keep(recipes, current_user.email, '')
     flash(flash_msg, 'success')
     return redirect(url_for('home', username=current_user.username))
-
-# def export_to_keep(recipes, email, password):
-#     try:
-#         keep = gkeepapi.Keep()
-#         keep.login(email, password)
-#         my_note = keep.createList('ByShoppingPortal')
-#         for rec in recipes:
-#             list_item = my_note.add(rec[0], checked=False)
-#             for ing in rec[1]:
-#                 list_item.add(ing, checked=False)
-#         keep.sync()
-#         return 'Your recipes have been exported'
-#     except Exception as ex:
-#         return ex.__str__
-    
