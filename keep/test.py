@@ -1,7 +1,7 @@
 import gkeepapi
 
 keep = gkeepapi.Keep()
-keep.login('user','passwd')
+keep.login('user', 'passwd')
 
 # retrieve note/list
 # my_note = keep.get('noteId')

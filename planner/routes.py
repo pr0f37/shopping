@@ -1,5 +1,6 @@
 import secrets
 import os
+from keep import export_to_keep
 from PIL import Image
 from flask import render_template, url_for, flash, redirect, request, abort
 from planner import app, db, bcrypt
@@ -173,3 +174,33 @@ def user_recipes(username):
         .order_by(Recipe.date_posted.desc())\
         .paginate(page=page, per_page=5)
     return render_template('user_recipes.html', recipe_list=recipe_list, user=user)
+
+
+@app.route("/export")
+def export():
+    recipes_db = Recipe.query.filter_by(author=current_user).all()
+    recipes = []
+    for recipe in recipes_db:
+        ingredients = []
+        for ingredient in recipe.ingredients:
+                ingredients.append(f'{ingredient.name} {ingredient.amount}'.strip())
+        recipes.append((recipe.title, ingredients))
+
+    flash_msg = export_to_keep(recipes, current_user.email, '')
+    flash(flash_msg, 'success')
+    return redirect(url_for('home', username=current_user.username))
+
+# def export_to_keep(recipes, email, password):
+#     try:
+#         keep = gkeepapi.Keep()
+#         keep.login(email, password)
+#         my_note = keep.createList('ByShoppingPortal')
+#         for rec in recipes:
+#             list_item = my_note.add(rec[0], checked=False)
+#             for ing in rec[1]:
+#                 list_item.add(ing, checked=False)
+#         keep.sync()
+#         return 'Your recipes have been exported'
+#     except Exception as ex:
+#         return ex.__str__
+    
