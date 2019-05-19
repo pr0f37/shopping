@@ -24,7 +24,7 @@
             </div>
             <!-- End of fields-->
             <div class="col-md-auto">
-                <p class="delete" onclick="console.log('click'); $(this).closest('.row').remove();">x</p>
+                <p class="btn btn-danger btn-sm font-weight-bold mt-1 mb-1" onclick="console.log('click'); $(this).closest('.row').remove();">X</p>
             </div>
             <div class="col-md"></div>
         </div>
@@ -74,14 +74,6 @@
                         {{ form.text(class="form-control form-control-lg") }}
                     {% endif %}
                 </div>
-                <div class="form-group">
-                    <div class="row">
-                        <div class="col"></div>
-                        <div class="col">
-                                <p class="add-one" onclick="$('.dynamic-element').first().clone().appendTo('.dynamic-stuff').show();">Add Ingredient</p>
-                        </div>
-                        <div class="col"></div>
-                </div>
                 <div class="dynamic-stuff">
                 {% for ingredient in ingredients %}
                     <div class="row">
@@ -96,7 +88,7 @@
                             <input class="form-control" id="ingredient_amount" name="ingredient_amount" type="text" value="{{ ingredient.amount }}">
                         </div>
                         <div class="col-md-auto">
-                            <p class="delete inactive" onclick="console.log('click'); $(this).closest('.row').remove();">x</p>
+                            <p class="btn btn-danger btn-sm font-weight-bold mt-1 mb-1" onclick="console.log('click'); $(this).closest('.row').remove();">X</p>
                         </div>
                         <div class="col-md"></div>
                     </div>
@@ -104,9 +96,14 @@
                 <!-- Dynamic element will be cloned here -->
                 <!-- You can call clone function once if you want it to show it a first element-->
                 </div>
+                <div class="form-group">
+                    <div class="row">
+                        <div class="btn btn-primary mx-auto" onclick="$('.dynamic-element').first().clone().appendTo('.dynamic-stuff').show();">Add Ingredient</div>
+                    </div>  
+                </div>
             </fieldset>
             <div class="form-group">
-                {{ form.submit(class="btn btn-outline-info") }}
+                {{ form.submit(class="btn btn-outline-primary") }}
             </div>
         </form>
     </div>

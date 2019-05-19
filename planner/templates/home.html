@@ -7,7 +7,14 @@
                 <a class="mr-2" href="{{ url_for('user_recipes', username=recipe.author.username) }}">{{ recipe.author.username }}</a>
                 <small class="text-muted">{{ recipe.date_posted.strftime('%Y-%m-%d %H:%M') }}</small>
             </div>
-            <p class="lead"><a class="article-title" href="{{ url_for('recipe', recipe_id=recipe.id) }}"">{{ recipe.title }}</a></p>
+            <p class="lead">
+                {% if current_user in recipe.fans %}
+                    <a class="btn btn-danger btn-sm mt-1 mb-1" href="{{ url_for('shop_recipe', recipe_id=recipe.id) }}">Remove from shopping list</a>
+                {% else %}
+                    <a class="btn btn-secondary btn-sm mt-1 mb-1" href="{{ url_for('shop_recipe', recipe_id=recipe.id) }}">Add to shopping list</a>
+                {% endif %} 
+                <br><a class="article-title" href="{{ url_for('recipe', recipe_id=recipe.id) }}"">{{ recipe.title }}</a>      
+            </p>
             <p>Składniki:
                 <ul class="list">
                     {% for ingr in recipe.ingredients %}
@@ -32,4 +39,5 @@
             ...
         {% endif %}
     {% endfor %}
+
 {% endblock content %}

@@ -17,12 +17,39 @@ def home():
     return render_template('home.html', recipe_list=recipe_list, title='Home')
 
 
-@app.route("/recipes")
+@app.route("/shopping_list")
 @login_required
-def recipes():
+def shopping_list():
     page = request.args.get('page', 1, type=int)
     recipe_list = Recipe.query.join(Recipe.fans).filter_by(email=current_user.email).paginate(page=page, per_page=5)
-    return render_template('recipes.html', recipe_list=recipe_list, title='Recipes')
+    return render_template('shopping_list.html', recipe_list=recipe_list, title='Shopping list')
+
+
+@app.route("/shopping_list/export")
+def export():
+    recipes_db = current_user.favorite_recipes
+    recipes = []
+    for recipe in recipes_db:
+        ingredients = []
+        for ingredient in recipe.ingredients:
+            if ingredient.amount != '':
+                ingredients.append(f'{ingredient.name} - {ingredient.amount}')
+            else:
+                ingredients.append(ingredient.name)
+        recipes.append((recipe.title, ingredients))
+    flash_msg = export_to_keep(recipes, current_user.email, '')
+    flash(flash_msg, 'success')
+    return redirect(url_for('shopping_list'))
+
+
+@app.route("/shopping_list/<recipe_id>/remove")
+@login_required
+def shopping_list_remove_recipe(recipe_id):
+    recipe = Recipe.query.get_or_404(recipe_id)
+    if current_user in recipe.fans:
+        recipe.fans.remove(current_user)
+        db.session.commit()
+    return redirect(url_for('shopping_list'))
 
 
 @app.route("/about")
@@ -163,7 +190,19 @@ def delete_recipe(recipe_id):
         db.session.delete(ingredient)
     db.session.delete(recipe)
     db.session.commit()
-    flash('Your recipe has been updated', 'success')
+    flash('Your recipe has been deleted', 'success')
+    return redirect(url_for('home'))
+
+
+@app.route("/recipe/<recipe_id>/shoplist")
+@login_required
+def shop_recipe(recipe_id):
+    recipe = Recipe.query.get_or_404(recipe_id)
+    if current_user in recipe.fans:
+        recipe.fans.remove(current_user)
+    else:
+        recipe.fans.append(current_user)
+    db.session.commit()
     return redirect(url_for('home'))
 
 
@@ -175,18 +214,3 @@ def user_recipes(username):
         .order_by(Recipe.date_posted.desc())\
         .paginate(page=page, per_page=5)
     return render_template('user_recipes.html', recipe_list=recipe_list, user=user)
-
-
-@app.route("/export")
-def export():
-    recipes_db = Recipe.query.filter_by(author=current_user).all()
-    recipes = []
-    for recipe in recipes_db:
-        ingredients = []
-        for ingredient in recipe.ingredients:
-                ingredients.append(f'{ingredient.name} {ingredient.amount}'.strip())
-        recipes.append((recipe.title, ingredients))
-
-    flash_msg = export_to_keep(recipes, current_user.email, '')
-    flash(flash_msg, 'success')
-    return redirect(url_for('home', username=current_user.username))

@@ -1,6 +1,11 @@
 {% extends "layout.html" %}
 {% block content %}
-    <h1 class="mb-3">Recipes by {{user.username}} ({{ recipe_list.total}})</h1>
+    {% if recipe_list.items %}
+        <a class="btn btn-primary btn-lg mt-1 mb-1" href="{{ url_for('export') }}">Send to Google Keep</a><br>
+    {% else %}
+        <h1>Your shopping list is empty :(</h1>
+        <h3><a class="btn btn-primary btn-lg mt-1 mb-1" href="{{ url_for('home') }}">Add some recipes!</a></h3>
+    {% endif %}
     {% for recipe in recipe_list.items %}
         <article class="content-section">
             <div class="article-metadata">
@@ -8,7 +13,11 @@
                 <a class="mr-2" href="{{ url_for('user_recipes', username=recipe.author.username) }}">{{ recipe.author.username }}</a>
                 <small class="text-muted">{{ recipe.date_posted.strftime('%Y-%m-%d %H:%M') }}</small>
             </div>
-            <p class="lead"><a class="article-title" href="{{ url_for('recipe', recipe_id=recipe.id) }}"">{{ recipe.title }}</a></p>
+            <p class="lead">
+                <a class="btn btn-danger btn-sm mt-1 mb-1" href="{{ url_for('shopping_list_remove_recipe', recipe_id=recipe.id) }}">Remove from shopping list</a><br>
+                <a href="#"><span class="glyphicon glyphicon-envelope"></span></a>
+                <a class="article-title" href="{{ url_for('recipe', recipe_id=recipe.id) }}"">{{ recipe.title }}</a>
+            </p>
             <p>Składniki:
                 <ul class="list">
                     {% for ingr in recipe.ingredients %}
@@ -25,9 +34,9 @@
     {% for page_num in recipe_list.iter_pages(left_edge=1, right_edge=1, left_current=1, right_current=2) %}
         {% if page_num %}
             {% if recipe_list.page == page_num %}
-                <a class="btn btn-primary mb-4" href="{{ url_for('user_recipes', username=user.username, page=page_num) }}">{{ page_num }}</a>
+                <a class="btn btn-primary mb-4" href="{{ url_for('home', page=page_num) }}">{{ page_num }}</a>
             {% else %}
-                <a class="btn btn-outline-primary mb-4" href="{{ url_for('user_recipes', username=user.username, page=page_num) }}">{{ page_num }}</a>
+                <a class="btn btn-outline-primary mb-4" href="{{ url_for('home', page=page_num) }}">{{ page_num }}</a>
             {% endif %}
         {% else %}
             ...
