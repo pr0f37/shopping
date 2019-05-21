@@ -1,4 +1,27 @@
 {% extends "layout.html" %}
 {% block content %}
-    <h3>Scraper will be here</h3>
+    <div class="content-section">
+        <form action="" method="post">
+            {{ form.hidden_tag() }}
+            <fieldset class="form-group">
+                <legend class="border-bottom mb-4">Import recipe from a different page</legend>
+                <div class="form-group">
+                    {{ form.recipe_url.label(class="form-control-label") }}
+                    {% if form.recipe_url.errors %}
+                        {{ form.recipe_url(class="form-control form-control-lg is-invalid") }}
+                        <div class="invalid-feedback">
+                            {% for error in form.recipe_url.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ form.recipe_url(class="form-control form-control-lg") }}
+                    {% endif %}
+                </div>
+            </fieldset>
+            <div class="form-group">
+                {{ form.submit(class="btn btn-outline-info") }}
+            </div>
+        </form>
+    </div>
 {% endblock content %}

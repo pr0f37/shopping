@@ -1,10 +1,11 @@
 import secrets
 import os
 from keep import export_to_keep
+from scraper import lidl
 from PIL import Image
 from flask import render_template, url_for, flash, redirect, request, abort
 from planner import app, db, bcrypt
-from planner.forms import RegistrationForm, LoginForm, UpdateAccountForm, RecipeForm
+from planner.forms import RegistrationForm, LoginForm, UpdateAccountForm, RecipeForm, ScraperForm
 from planner.models import User, Recipe, Ingredient
 from flask_login import login_user, current_user, logout_user, login_required
 
@@ -57,10 +58,19 @@ def about():
     return render_template('about.html', title='About')
 
 
-@app.route("/scraper")
+@app.route("/scraper", methods=['GET', 'POST'])
 @login_required
 def scraper():
-    return render_template('scraper.html', title='Scraper')
+    form = ScraperForm()
+    if form.validate_on_submit():
+        recipe_scr = lidl(form.recipe_url.data)
+        recipe = Recipe(title=recipe_scr['name'], time=recipe_scr['time'], text=recipe_scr['text'], author=current_user)
+        recipe.ingredients = [Ingredient(name=x, amount=y[0] if y else '') for x, *y in recipe_scr['ingredients']]
+        db.session.add(recipe)
+        db.session.commit()
+        flash(f'The recipe has been imported!', 'success')
+        return redirect(url_for('home'))
+    return render_template('scraper.html', title='Scraper', form=form)
 
 
 @app.route("/register", methods=['GET', 'POST'])
@@ -144,7 +154,7 @@ def new_recipe():
         db.session.add(recipe)
         db.session.commit()
         flash('Your recipe has been created', 'success')
-        return redirect(url_for('recipes'))
+        return redirect(url_for('home'))
     return render_template('create_recipe.html', title='New Recipe', form=form, ingredients=[Ingredient(name='', amount='')])
 
 

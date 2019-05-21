@@ -2,7 +2,7 @@ from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileAllowed
 from flask_login import current_user
 from wtforms import StringField, PasswordField, SubmitField, BooleanField, TextAreaField
-from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError
+from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError, URL
 from planner.models import User, Recipe
 
 
@@ -69,3 +69,8 @@ class RecipeForm(FlaskForm):
     #     recipe = Recipe.query.filter_by(title=title.data).first()
     #     if recipe:
     #         raise ValidationError('The recipe with the same title exists. Choose a different recipe title')
+
+
+class ScraperForm(FlaskForm):
+    recipe_url = StringField('Recipe url', validators=[DataRequired(), URL()])
+    submit = SubmitField('Scrape')
