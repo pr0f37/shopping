@@ -1,0 +1,8 @@
+.*
+.vscode
+venv/*
+*.log
+*.db
+keep/*.json
+*.pyc
+!.gitignore
