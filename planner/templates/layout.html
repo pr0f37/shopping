@@ -23,7 +23,7 @@
                     {% if current_user.is_authenticated %}
                         <a class="nav-item nav-link" href="{{ url_for('shopping.shopping_list') }}">Shopping list</a>
                         <a class="nav-item nav-link" href="{{ url_for('recipes.new_recipe') }}">New Recipe</a>
-                        <a class="nav-item nav-link" href="#">Calendar</a>
+                        <a class="nav-item nav-link" href="#scraperModal" data-toggle="modal" data-target="#scraperModal">Import recipe</a>
                         <a class="nav-item nav-link" href="{{ url_for('users.account') }}">Account</a>
                         <a class="nav-item nav-link" href="{{ url_for('users.logout') }}">Log out</a>
                     {% else %}
@@ -54,6 +54,33 @@
                 <div class="col"></div>
             </div>
         </main>
+
+
+        <!-- Modal -->
+        <div class="modal fade" id="scraperModal" tabindex="-1" role="dialog" aria-labelledby="scraperModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                <h5 class="modal-title" id="scraperModalLabel">Import recipe from a different page</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                </div>
+                <form action="{{ url_for('scrap.scraper') }}" method="POST">
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label class="form-control-label" for="recipe_url">Recipe url</label>
+                            <input class="form-control mr-1 ml-1" id="recipe_url" name="recipe_url" required="" type="text" value="">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <input class="btn btn-outline-info" id="submit" name="submit" type="submit" value="Scrape">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    </div>
+                </form>
+            </div>
+            </div>
+        </div>
         <!-- Optional JavaScript -->
         <!-- jQuery first, then Popper.js, then Bootstrap JS -->
         <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
