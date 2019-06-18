@@ -1,7 +1,7 @@
 import gkeepapi
 
 
-def ingredients_to_export(ingredients):
+def ings_to_exp(ingredients):
     for ingredient in ingredients:
         if ingredient.amount != '':
             yield(f'{ingredient.name} - {ingredient.amount}')
@@ -9,14 +9,9 @@ def ingredients_to_export(ingredients):
             yield(ingredient.name)
 
 
-def recipes_to_export(recipes):
-    for recipe in recipes:
-        yield(recipe.title, ingredients_to_export(recipe.ingredients))
-
-
 def export_to_keep(recipes, email, password):
     try:
-        recipes_exp = recipes_to_export(recipes)
+        recipes_exp = ((recipe.title, ings_to_exp(recipe.ingredients)) for recipe in recipes)
         keep = gkeepapi.Keep()
         keep.login(email, password)
         my_note = keep.createList('ByShoppingPortal')
