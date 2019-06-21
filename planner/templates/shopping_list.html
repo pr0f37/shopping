@@ -18,17 +18,7 @@
                 <a href="#"><span class="glyphicon glyphicon-envelope"></span></a>
                 <a class="article-title" href="{{ url_for('recipes.recipe', recipe_id=recipe.id) }}"">{{ recipe.title }}</a>
             </p>
-            <p>Składniki:
-                <ul class="list">
-                    {% for ingr in recipe.ingredients %}
-                        <li>{{ ingr.name }}{% if ingr.amount %}: {{ ingr.amount }} {{ ingr.unit }}{% endif %}</li>
-                    {% endfor %}
-                </ul>
-            </p>
-            <p>Czas: {{ recipe.time }}</p>
-            <p>Przepis:
-                {{ recipe.text }}
-            </p>
+            <small class="text-muted">Składniki: {{recipe.ingredients|length}} | Czas: {{ recipe.time }}</small>
         </article>
     {% endfor %}
     {% for page_num in recipe_list.iter_pages(left_edge=1, right_edge=1, left_current=1, right_current=2) %}
