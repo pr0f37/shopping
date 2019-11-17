@@ -6,3 +6,4 @@ venv/*
 keep/*.json
 *.pyc
 !.gitignore
+*egg-info

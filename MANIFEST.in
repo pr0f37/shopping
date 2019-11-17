@@ -1,0 +1,5 @@
+graft planner
+graft keep
+global-exclude *.pyc
+global-exclude *.db
+prune /venv

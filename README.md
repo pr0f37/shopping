@@ -1,2 +1,2 @@
-# Shopping
+# Shopping portal
 
