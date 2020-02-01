@@ -1,12 +1,13 @@
 from flask import Blueprint, render_template, redirect, url_for, flash, request
 from flask_login import current_user, login_required, login_user, logout_user
-from planner import db, bcrypt
+from flask_bcrypt import Bcrypt
+from planner import db
 from planner.models import User, Recipe
 from planner.users.forms import (RegistrationForm, LoginForm,
                                  UpdateAccountForm,
                                  RequestResetForm, ResetPasswordForm)
 from planner.users.utils import save_picture, send_reset_email
-
+bcrypt = Bcrypt()
 users = Blueprint('users', __name__)
 
 
