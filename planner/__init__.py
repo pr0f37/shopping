@@ -3,7 +3,7 @@ from planner.models import db, login_manager
 from planner.users.routes import bcrypt, users
 from planner.users.utils import mail
 from planner.recipes.routes import recipes
-from planner.main.routes import main
+from planner.main.routes import main_bp
 from planner.scraper.routes import scrap
 from planner.shopping_list.routes import shopping
 from planner.config import Config
@@ -19,7 +19,7 @@ def create_app(config_class=Config):
 
     app.register_blueprint(users)
     app.register_blueprint(recipes)
-    app.register_blueprint(main)
+    app.register_blueprint(main_bp)
     app.register_blueprint(scrap)
     app.register_blueprint(shopping)
 
