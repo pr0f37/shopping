@@ -9,3 +9,4 @@ class Config():
     MAIL_PASSWORD = os.environ.get('EMAIL_PASSWORD')
     SECRET_KEY = 'd3aea4edbd9911a7d1649cb386549c92'
     SQLALCHEMY_DATABASE_URI = 'sqlite:///site.db'
+    SQLALCHEMY_TRACK_MODIFICATIONS = False
