@@ -10,14 +10,14 @@ from planner.config import Config
 db = SQLAlchemy()
 bcrypt = Bcrypt()
 login_manager = LoginManager()
-login_manager.login_view = 'users.login'
-login_manager.login_message_category = 'info'
+login_manager.login_view = "users.login"
+login_manager.login_message_category = "info"
 mail = Mail()
 
 
 def create_app(config_class=Config):
     app = Flask(__name__)
-    app.config.from_object(Config)
+    app.config.from_object(config_class)
 
     db.init_app(app)
     bcrypt.init_app(app)
@@ -29,6 +29,7 @@ def create_app(config_class=Config):
     from planner.main.routes import main
     from planner.scraper.routes import scrap
     from planner.shopping_list.routes import shopping
+
     app.register_blueprint(users)
     app.register_blueprint(recipes)
     app.register_blueprint(main)

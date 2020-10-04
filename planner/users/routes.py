@@ -2,52 +2,58 @@ from flask import Blueprint, render_template, redirect, url_for, flash, request
 from flask_login import current_user, login_required, login_user, logout_user
 from planner import db, bcrypt
 from planner.models import User, Recipe
-from planner.users.forms import (RegistrationForm, LoginForm,
-                                 UpdateAccountForm,
-                                 RequestResetForm, ResetPasswordForm)
+from planner.users.forms import (
+    RegistrationForm,
+    LoginForm,
+    UpdateAccountForm,
+    RequestResetForm,
+    ResetPasswordForm,
+)
 from planner.users.utils import save_picture, send_reset_email
 
-users = Blueprint('users', __name__)
+users = Blueprint("users", __name__)
 
 
-@users.route("/register", methods=['GET', 'POST'])
+@users.route("/register", methods=["GET", "POST"])
 def register():
     if current_user.is_authenticated:
-        return redirect(url_for('main.home'))
+        return redirect(url_for("main.home"))
     form = RegistrationForm()
     if form.validate_on_submit():
-        hashed_pw = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
-        user = User(username=form.username.data, email=form.email.data, password=hashed_pw)
+        hashed_pw = bcrypt.generate_password_hash(form.password.data).decode("utf-8")
+        user = User(
+            username=form.username.data, email=form.email.data, password=hashed_pw
+        )
         db.session.add(user)
         db.session.commit()
-        flash(f'Your account has been created!', 'success')
-        return redirect(url_for('users.login'))
-    return render_template('register.html', title='Register', form=form)
+        flash(f"Your account has been created!", "success")
+        return redirect(url_for("users.login"))
+    return render_template("register.html", title="Register", form=form)
 
 
-@users.route("/login", methods=['GET', 'POST'])
+@users.route("/login", methods=["GET", "POST"])
 def login():
     if current_user.is_authenticated:
-        return redirect(url_for('main.home'))
+        return redirect(url_for("main.home"))
     form = LoginForm()
     if form.validate_on_submit():
         user = User.query.filter_by(email=form.email.data).first()
         if user and bcrypt.check_password_hash(user.password, form.password.data):
             login_user(user, remember=form.remember.data)
-            next_page = request.args.get('next')
-            return redirect(next_page) if next_page else redirect(url_for('main.home'))
+            next_page = request.args.get("next")
+            return redirect(next_page) if next_page else redirect(url_for("main.home"))
         else:
-            flash('Login unsuccessful. Please check email and password', 'danger')
-    return render_template('login.html', title='Login', form=form)
+            flash("Login unsuccessful. Please check email and password", "danger")
+    return render_template("login.html", title="Login", form=form)
 
 
-@users.route("/logout", methods=['GET'])
+@users.route("/logout", methods=["GET"])
 def logout():
     logout_user()
-    return redirect(url_for('main.home'))
+    return redirect(url_for("main.home"))
 
 
-@users.route("/account", methods=['GET', 'POST'])
+@users.route("/account", methods=["GET", "POST"])
 @login_required
 def account():
     form = UpdateAccountForm()
@@ -58,51 +64,55 @@ def account():
         current_user.username = form.username.data
         current_user.email = form.email.data
         db.session.commit()
-        flash('Your account has been updated!', 'success')
-        return redirect(url_for('users.account'))
-    elif request.method == 'GET':
+        flash("Your account has been updated!", "success")
+        return redirect(url_for("users.account"))
+    elif request.method == "GET":
         form.username.data = current_user.username
         form.email.data = current_user.email
-    image_file = url_for('static', filename=f'profile_pics/{current_user.image_file}')
-    return render_template('account.html', title='Account', image_file=image_file, form=form)
+    image_file = url_for("static", filename=f"profile_pics/{current_user.image_file}")
+    return render_template(
+        "account.html", title="Account", image_file=image_file, form=form
+    )
 
 
 @users.route("/user/<string:username>")
 def user_recipes(username):
-    page = request.args.get('page', 1, type=int)
+    page = request.args.get("page", 1, type=int)
     user = User.query.filter_by(username=username).first_or_404()
-    recipe_list = Recipe.query.filter_by(author=user)\
-        .order_by(Recipe.date_posted.desc())\
+    recipe_list = (
+        Recipe.query.filter_by(author=user)
+        .order_by(Recipe.date_posted.desc())
         .paginate(page=page, per_page=5)
-    return render_template('user_recipes.html', recipe_list=recipe_list, user=user)
+    )
+    return render_template("user_recipes.html", recipe_list=recipe_list, user=user)
 
 
-@users.route("/reset_password", methods=['GET', 'POST'])
+@users.route("/reset_password", methods=["GET", "POST"])
 def reset_request():
     if current_user.is_authenticated:
-        return redirect(url_for('main.home'))
+        return redirect(url_for("main.home"))
     form = RequestResetForm()
     if form.validate_on_submit():
         user = User.query.filter_by(email=form.email.data).first()
         send_reset_email(user)
-        flash('Reset password email has been sent', 'info')
-        return redirect(url_for('users.login'))
-    return render_template('reset_request.html', title='Reset Password', form=form)
+        flash("Reset password email has been sent", "info")
+        return redirect(url_for("users.login"))
+    return render_template("reset_request.html", title="Reset Password", form=form)
 
 
-@users.route("/reset_password/<string:token>", methods=['GET', 'POST'])
+@users.route("/reset_password/<string:token>", methods=["GET", "POST"])
 def reset_token(token):
     if current_user.is_authenticated:
-        return redirect(url_for('main.home'))
+        return redirect(url_for("main.home"))
     user = User.verify_reset_token(token)
     if user is None:
-        flash('That is an invalid/expired token', 'warning')
-        return redirect(url_for('users.reset_request'))
+        flash("That is an invalid/expired token", "warning")
+        return redirect(url_for("users.reset_request"))
     form = ResetPasswordForm()
     if form.validate_on_submit():
-        hashed_pw = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
+        hashed_pw = bcrypt.generate_password_hash(form.password.data).decode("utf-8")
         user.password = hashed_pw
         db.session.commit()
-        flash(f'Your password has been updated!', 'success')
-        return redirect(url_for('users.login'))
-    return render_template('reset_token.html', title='Reset Password', form=form)
+        flash(f"Your password has been updated!", "success")
+        return redirect(url_for("users.login"))
+    return render_template("reset_token.html", title="Reset Password", form=form)
