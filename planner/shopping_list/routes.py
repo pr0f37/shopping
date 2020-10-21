@@ -33,7 +33,10 @@ def shopping_list():
 def export():
     recipes = current_user.favorite_recipes
     flash_msg = export_to_keep(
-        recipes, current_user.email, current_app.config["MAIL_PASSWORD"]
+        recipes,
+        current_app.config["MAIL_USERNAME"],
+        current_app.config["MAIL_PASSWORD"],
+        current_user.email,
     )
     flash(flash_msg, "success")
     return redirect(url_for("shopping.shopping_list"))

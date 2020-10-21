@@ -12,8 +12,8 @@ def load_user(user_id):
 
 class Ingredient(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(100), nullable=False)
-    amount = db.Column(db.String(10))
+    name = db.Column(db.String(1000), nullable=False)
+    amount = db.Column(db.String(100))
     recipe_id = db.Column(db.Integer, db.ForeignKey("recipe.id"), nullable=False)
 
     def __repr__(self):
