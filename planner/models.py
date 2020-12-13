@@ -26,6 +26,23 @@ class Likes(db.Model):
     recipe_id = db.Column(db.Integer, db.ForeignKey("recipe.id"), primary_key=True)
 
 
+class RecipeLabels(db.Model):
+    __tablename__ = "recipe_labels"
+    label_id = db.Column(db.Integer, db.ForeignKey("label.id"), primary_key=True)
+    recipe_id = db.Column(db.Integer, db.ForeignKey("recipe.id"), primary_key=True)
+
+
+class Label(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(50), nullable=False)
+    recipes = db.relationship(
+        "Recipe", secondary="recipe_labels", back_populates="labels"
+    )
+
+    def __repr__(self):
+        return f"Label('{self.name}')"
+
+
 class Recipe(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(100), nullable=False)
@@ -35,6 +52,9 @@ class Recipe(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
     ingredients = db.relationship("Ingredient", backref="recipes", lazy=True)
     fans = db.relationship("User", secondary="likes", back_populates="favorite_recipes")
+    labels = db.relationship(
+        "Label", secondary="recipe_labels", back_populates="recipes"
+    )
 
     def __repr__(self):
         return f"Recipe('title={self.title}', date_posted='{self.date_posted}', time='{self.time}, ingredients='{self.ingredients}, fans={self.fans}')"
@@ -61,7 +81,7 @@ class User(db.Model, UserMixin):
         try:
             user_id = s.loads(token)["user_id"]
             return User.query.get(user_id)
-        except:
+        except Exception:
             return None
 
     def __repr__(self):

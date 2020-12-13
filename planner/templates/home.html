@@ -13,7 +13,7 @@
                 {% if current_user in recipe.fans %}
                     <a class="btn btn-danger btn-sm mt-1 mb-1" href="{{ url_for('recipes.shop_recipe', recipe_id=recipe.id) }}">Remove from shopping list</a>
                 {% else %}
-                    <a class="btn btn-secondary btn-sm mt-1 mb-1" href="{{ url_for('recipes.shop_recipe', recipe_id=recipe.id) }}">Add to shopping list</a>
+                    <a class="btn btn-primary btn-sm mt-1 mb-1" href="{{ url_for('recipes.shop_recipe', recipe_id=recipe.id) }}">Add to shopping list</a>
                 {% endif %} 
                 <br><a class="article-title" href="{{ url_for('recipes.recipe', recipe_id=recipe.id) }}"">{{ recipe.title }}</a>      
             </p>
