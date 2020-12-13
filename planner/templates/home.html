@@ -1,5 +1,7 @@
 {% extends "layout.html" %}
 {% block content %}
+    <a class="btn btn-primary btn-lg mt-1 mb-1" href="#scraperModal" data-toggle="modal" data-target="#scraperModal">Import recipe</a>
+    <a class="btn btn-primary btn-lg mt-1 mb-1" href="{{ url_for('recipes.new_recipe') }}">New Recipe</a>
     {% for recipe in recipe_list.items %}
         <article class="content-section">
             <div class="article-metadata">

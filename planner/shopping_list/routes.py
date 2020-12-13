@@ -30,6 +30,7 @@ def shopping_list():
 
 
 @shopping.route("/shopping_list/export")
+@login_required
 def export():
     recipes = current_user.favorite_recipes
     flash_msg = export_to_keep(
